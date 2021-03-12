@@ -5,6 +5,7 @@ const hb = require('handlebars')
 module.exports
 async function generatePdf(file, options, callback) {
   // we are using headless mode
+  console.log("in generate PDF method");
   let args = [
     '--no-sandbox',
     '--disable-setuid-sandbox',
@@ -15,9 +16,12 @@ async function generatePdf(file, options, callback) {
   }
 
   const browser = await puppeteer.launch({
+    headless: true,
     args: args
   });
   const page = await browser.newPage();
+  
+  console.log("browser----", browser);
 
   if(file.content) {
     console.log("Compiling the template with handlebars")
@@ -25,6 +29,8 @@ async function generatePdf(file, options, callback) {
     const template = hb.compile(file.content, { strict: true });
     const result = template(file.content);
     const html = result;
+    
+    console.log("html----", html);
 
     // We set the page content as the generated html by handlebars
     await page.setContent(html);
